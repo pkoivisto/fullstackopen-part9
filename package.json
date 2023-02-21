@@ -4,14 +4,21 @@
   "description": "",
   "scripts": {
     "calculateBmi": "ts-node bmiCalculator.ts",
-    "calculateExercises": "ts-node exerciseCalculator.ts"
+    "calculateExercises": "ts-node exerciseCalculator.ts",
+    "dev": "ts-node-dev index.ts",
+    "start": "ts-node index.ts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pkoivisto/fullstackopen-part9.git"
   },
   "devDependencies": {
+    "@types/express": "^4.17.17",
     "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
   }
 }
