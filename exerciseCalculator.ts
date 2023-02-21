@@ -1,3 +1,5 @@
+import { parseArgsAsNumbers } from './utils';
+
 type Rating = 1 | 2 | 3;
 
 const rateResult = (average: number, target: number): Rating => {
@@ -49,4 +51,9 @@ const calculateExercises = (hourCounts: Array<number>, target: number): Result =
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const [target, ...hours] = parseArgsAsNumbers(process.argv, 2);
+  console.log(calculateExercises(hours, target));
+} catch (e: unknown) {
+  console.error(e);
+}
