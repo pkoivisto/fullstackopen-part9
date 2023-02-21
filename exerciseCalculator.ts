@@ -10,7 +10,7 @@ const rateResult = (average: number, target: number): Rating => {
   } else {
     return 3;
   }
-}
+};
 
 const describeRating = (rating: Rating) => {
   switch (rating) {
@@ -21,7 +21,7 @@ const describeRating = (rating: Rating) => {
     case 3:
       return "Good job!";
   }
-}
+};
 
 interface Result {
   periodLength: number;
@@ -48,8 +48,8 @@ const calculateExercises = (hourCounts: Array<number>, target: number): Result =
     ratingDescription: describeRating(rating),
     target,
     average
-  }
-}
+  };
+};
 
 try {
   const [target, ...hours] = parseArgsAsNumbers(process.argv, 2);

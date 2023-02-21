@@ -24,7 +24,7 @@ export const calculateBmi = (height: number, weight: number) => {
   } else {
     return "Obese (Class III)";
   }
-}
+};
 
 try {
   const [height, weight] = parseArgsAsNumbers(process.argv, 2, 2);
