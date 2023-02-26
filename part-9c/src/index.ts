@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { getDiagnoses } from "./services/diagnoses";
-import { getPatients } from "./services/patients";
+import { getPatients, createPatient } from "./services/patients";
 
 const app = express();
 app.use(express.json());
@@ -20,6 +20,13 @@ app.get("/api/diagnoses", (_, res) => {
 app.get("/api/patients", (_, res) => {
   res.send(getPatients());
 });
+
+app.post("/api/patients", (req, res) => {
+  console.log(req);
+  const patient = createPatient(req.body);
+
+  res.status(201).send(patient)
+})
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
