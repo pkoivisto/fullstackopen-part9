@@ -6,7 +6,72 @@ interface DiaryEntry {
   date: string;
   visibility: string;
   weather: string;
+  comment: string;
 }
+
+type NewDiaryEntry = Omit<DiaryEntry, "id">;
+
+const AddNewEntry = () => {
+  const [diaryEntry, setDiaryEntry] = useState<NewDiaryEntry>({
+    date: "",
+    visibility: "",
+    weather: "",
+    comment: "",
+  });
+
+  const postEntry = () => axios.post("http://localhost:3001/api/diaries", diaryEntry);
+
+  return (
+    <>
+      <h1>Add new entry</h1>
+      <p>
+        <label htmlFor="new-date">date</label>{" "}
+        <input
+          id="new-date"
+          type="text"
+          value={diaryEntry.date}
+          onChange={(event) =>
+            setDiaryEntry({ ...diaryEntry, date: event.target.value })
+          }
+        />
+      </p>
+      <p>
+        <label htmlFor="new-visibility">visibility</label>{" "}
+        <input
+          id="new-visibility"
+          type="text"
+          value={diaryEntry.visibility}
+          onChange={(event) =>
+            setDiaryEntry({ ...diaryEntry, visibility: event.target.value })
+          }
+        />
+      </p>
+      <p>
+        <label htmlFor="new-weather">weather</label>{" "}
+        <input
+          id="new-weather"
+          type="text"
+          value={diaryEntry.weather}
+          onChange={(event) =>
+            setDiaryEntry({ ...diaryEntry, weather: event.target.value })
+          }
+        />
+      </p>
+      <p>
+        <label htmlFor="new-comment">comment</label>{" "}
+        <input
+          id="new-comment"
+          type="text"
+          value={diaryEntry.comment}
+          onChange={(event) =>
+            setDiaryEntry({ ...diaryEntry, comment: event.target.value })
+          }
+        />
+      </p>
+      <button type="submit" onClick={postEntry}>Add entry</button>
+    </>
+  );
+};
 
 const DiaryEntries = () => {
   const [diaryEntries, setDiaryEntries] = useState<Array<DiaryEntry>>([]);
@@ -36,9 +101,12 @@ const DiaryEntries = () => {
 };
 
 function App() {
-  return <div className="App">
-    <DiaryEntries />
-  </div>;
+  return (
+    <div className="App">
+      <AddNewEntry />
+      <DiaryEntries />
+    </div>
+  );
 }
 
 export default App;
