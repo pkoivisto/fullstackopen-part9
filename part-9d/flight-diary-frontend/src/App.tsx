@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 interface DiaryEntry {
   id: number;
@@ -11,7 +11,12 @@ interface DiaryEntry {
 
 type NewDiaryEntry = Omit<DiaryEntry, "id">;
 
-const AddNewEntry = () => {
+const AddNewEntry = ({
+  onEntryAdded,
+}: {
+  onEntryAdded: (entry: DiaryEntry) => void;
+}) => {
+  const [error, setError] = useState<string | undefined>(undefined);
   const [diaryEntry, setDiaryEntry] = useState<NewDiaryEntry>({
     date: "",
     visibility: "",
@@ -19,20 +24,33 @@ const AddNewEntry = () => {
     comment: "",
   });
 
-  const postEntry = () => axios.post("http://localhost:3001/api/diaries", diaryEntry);
+  const postEntry = () => {
+    setError(undefined);
+    axios
+    .post<DiaryEntry>("http://localhost:3001/api/diaries", diaryEntry)
+    .then((response) => {
+      onEntryAdded(response.data);
+    })
+    .catch((error) => {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data);
+      }
+    });
+  }
 
   return (
     <>
       <h1>Add new entry</h1>
+      {error ? <p style={{ color: "red" }}>{error}</p> : null}
       <p>
         <label htmlFor="new-date">date</label>{" "}
         <input
           id="new-date"
           type="text"
           value={diaryEntry.date}
-          onChange={(event) =>
-            setDiaryEntry({ ...diaryEntry, date: event.target.value })
-          }
+          onChange={(event) => {
+            setDiaryEntry({ ...diaryEntry, date: event.target.value });
+          }}
         />
       </p>
       <p>
@@ -68,21 +86,18 @@ const AddNewEntry = () => {
           }
         />
       </p>
-      <button type="submit" onClick={postEntry}>Add entry</button>
+      <button type="submit" onClick={postEntry}>
+        Add entry
+      </button>
     </>
   );
 };
 
-const DiaryEntries = () => {
-  const [diaryEntries, setDiaryEntries] = useState<Array<DiaryEntry>>([]);
-  useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/diaries")
-      .then((response: AxiosResponse<Array<DiaryEntry>>) => {
-        setDiaryEntries(response.data);
-      });
-  }, []);
-
+const DiaryEntries = ({
+  diaryEntries,
+}: {
+  diaryEntries: Array<DiaryEntry>;
+}) => {
   return (
     <>
       <h1>Diary entries</h1>
@@ -101,10 +116,21 @@ const DiaryEntries = () => {
 };
 
 function App() {
+  const [diaryEntries, setDiaryEntries] = useState<Array<DiaryEntry>>([]);
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/api/diaries")
+      .then((response: AxiosResponse<Array<DiaryEntry>>) => {
+        setDiaryEntries(response.data);
+      });
+  }, []);
+
   return (
     <div className="App">
-      <AddNewEntry />
-      <DiaryEntries />
+      <AddNewEntry
+        onEntryAdded={(entry) => setDiaryEntries([...diaryEntries, entry])}
+      />
+      <DiaryEntries diaryEntries={diaryEntries} />
     </div>
   );
 }
