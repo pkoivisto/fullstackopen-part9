@@ -1,11 +1,26 @@
 import { useEffect, useState } from "react";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
+
+enum Visibility {
+  Great = "great",
+  Good = "good",
+  Ok = "ok",
+  Poor = "poor",
+}
+
+enum Weather {
+  Sunny = "sunny",
+  Rainy = "rainy",
+  Cloudy = "cloudy",
+  Stormy = "stormy",
+  Windy = "windy",
+}
 
 interface DiaryEntry {
   id: number;
   date: string;
-  visibility: string;
-  weather: string;
+  visibility: Visibility;
+  weather: Weather;
   comment: string;
 }
 
@@ -19,24 +34,29 @@ const AddNewEntry = ({
   const [error, setError] = useState<string | undefined>(undefined);
   const [diaryEntry, setDiaryEntry] = useState<NewDiaryEntry>({
     date: "",
-    visibility: "",
-    weather: "",
+    visibility: Visibility.Ok,
+    weather: Weather.Cloudy,
     comment: "",
   });
+
+  const setVisibility = (visibility: Visibility) =>
+    setDiaryEntry({ ...diaryEntry, visibility });
+  const setWeather = (weather: Weather) =>
+    setDiaryEntry({ ...diaryEntry, weather });
 
   const postEntry = () => {
     setError(undefined);
     axios
-    .post<DiaryEntry>("http://localhost:3001/api/diaries", diaryEntry)
-    .then((response) => {
-      onEntryAdded(response.data);
-    })
-    .catch((error) => {
-      if (axios.isAxiosError(error)) {
-        setError(error.response?.data);
-      }
-    });
-  }
+      .post<DiaryEntry>("http://localhost:3001/api/diaries", diaryEntry)
+      .then((response) => {
+        onEntryAdded(response.data);
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          setError(error.response?.data);
+        }
+      });
+  };
 
   return (
     <>
@@ -46,35 +66,49 @@ const AddNewEntry = ({
         <label htmlFor="new-date">date</label>{" "}
         <input
           id="new-date"
-          type="text"
+          type="date"
           value={diaryEntry.date}
           onChange={(event) => {
             setDiaryEntry({ ...diaryEntry, date: event.target.value });
           }}
         />
       </p>
-      <p>
-        <label htmlFor="new-visibility">visibility</label>{" "}
-        <input
-          id="new-visibility"
-          type="text"
-          value={diaryEntry.visibility}
-          onChange={(event) =>
-            setDiaryEntry({ ...diaryEntry, visibility: event.target.value })
-          }
-        />
-      </p>
-      <p>
-        <label htmlFor="new-weather">weather</label>{" "}
-        <input
-          id="new-weather"
-          type="text"
-          value={diaryEntry.weather}
-          onChange={(event) =>
-            setDiaryEntry({ ...diaryEntry, weather: event.target.value })
-          }
-        />
-      </p>
+      <fieldset>
+          <legend>Visibility</legend>
+          {Object.values(Visibility).map((visibility) => (
+            <div key={visibility}>
+              <label htmlFor={visibility}>{visibility}</label>
+              <input
+                type="radio"
+                id={visibility}
+                checked={diaryEntry.visibility === visibility}
+                onChange={(event) => {
+                  if (event.target.value) {
+                    setVisibility(visibility);
+                  }
+                }}
+              />
+            </div>
+          ))}
+        </fieldset>
+      <fieldset>
+        <legend>Weather</legend>
+        {Object.values(Weather).map((weather) => (
+          <div key={weather}>
+            <label htmlFor={weather}>{weather}</label>
+            <input
+              type="radio"
+              id={weather}
+              checked={diaryEntry.weather === weather}
+              onChange={(event) => {
+                if (event.target.value) {
+                  setWeather(weather);
+                }
+              }}
+            />
+          </div>
+        ))}
+      </fieldset>
       <p>
         <label htmlFor="new-comment">comment</label>{" "}
         <input
