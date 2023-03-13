@@ -50,7 +50,7 @@ const parseNewPatient = (newPatient: unknown): newPatient is NewPatient => {
   } else {
     const { gender } = newPatient;
     if (!isGender(gender)) {
-      throw new Error("Could not parse gender: " + gender)
+      throw new Error("Could not parse gender: " + gender);
     }
   }
 
@@ -74,9 +74,17 @@ const patients: Array<Patient> = [...patientsData].filter(parsePatient);
 export const getPatients: () => Array<PublicPatientData> = () =>
   patients.map(({ ssn, ...rest }) => rest);
 
+export const getPatient: (id: string) => Patient | undefined = (id: string) => {
+  const patient = patients.find((patient) => patient.id === id);
+  if (patient) {
+    return { ...patient, entries: [] };
+  }
+  return;
+};
+
 export const createPatient = (newPatient: unknown) => {
-  if(!parseNewPatient(newPatient)) {
-    throw new Error("Incorrect details provided for new patient:" + newPatient)
+  if (!parseNewPatient(newPatient)) {
+    throw new Error("Incorrect details provided for new patient:" + newPatient);
   }
 
   const patient: Patient = { ...newPatient, id: uuid() };
