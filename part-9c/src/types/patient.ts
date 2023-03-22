@@ -1,10 +1,10 @@
-export enum Gender {
-  Male = 'male',
-  Female = 'female',
-  Other = 'other'
-}
+import { Entry } from "./entry";
 
-export interface Entry {}
+export enum Gender {
+  Male = "male",
+  Female = "female",
+  Other = "other",
+}
 
 export interface Patient {
   id: string;
@@ -16,6 +16,6 @@ export interface Patient {
   entries: Array<Entry>;
 }
 
-export type NewPatient = Omit<Patient, 'id'>;
+export type NewPatient = Omit<Patient, "id">;
 
-export type PublicPatientData = Omit<Patient, 'ssn' | 'entries'>;
+export type PublicPatientData = Omit<Patient, "ssn" | "entries">;
