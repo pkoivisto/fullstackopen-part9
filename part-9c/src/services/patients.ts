@@ -1,4 +1,4 @@
-import patientsData from "../../data/patients";
+import patientsData from "../../data/patients-full";
 import {
   Gender,
   NewPatient,
@@ -76,10 +76,7 @@ export const getPatients: () => Array<PublicPatientData> = () =>
 
 export const getPatient: (id: string) => Patient | undefined = (id: string) => {
   const patient = patients.find((patient) => patient.id === id);
-  if (patient) {
-    return { ...patient, entries: [] };
-  }
-  return;
+  return patient;
 };
 
 export const createPatient = (newPatient: unknown) => {
