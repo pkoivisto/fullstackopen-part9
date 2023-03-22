@@ -3,14 +3,42 @@ import { useParams } from "react-router";
 import { Box } from "@mui/system";
 
 import patientService from "../../services/patients";
-import { Patient } from "../../types";
+import { Patient, Entry } from "../../types";
 import { Typography } from "@mui/material";
+
+const EntryDetails = ({ entry }: { entry: Entry }) => {
+  return (
+    <Typography variant="body1">
+      <>
+        {entry.date} <i>{entry.description}</i>
+      </>
+      <ul>
+        {entry.diagnosisCodes?.map((code, i) => (
+          <li key={i}>{code}</li>
+        ))}
+      </ul>
+    </Typography>
+  );
+};
+
+const Entries = ({ patient }: { patient: Patient }) => {
+  return (
+    <>
+      <Typography variant="h4">Entries</Typography>
+      {patient.entries.map((entry) => (
+        <EntryDetails key={entry.id} entry={entry} />
+      ))}
+    </>
+  );
+};
 
 const RenderPatientDetails = ({ patient }: { patient: Patient }) => {
   const PatientAttribute = ({ attribute }: { attribute: keyof Patient }) => {
     return (
       <Typography variant="body1">
-        <b>{attribute}</b>: {patient[attribute]}
+        <>
+          <b>{attribute}</b>: {patient[attribute]}
+        </>
       </Typography>
     );
   };
@@ -21,6 +49,8 @@ const RenderPatientDetails = ({ patient }: { patient: Patient }) => {
       <PatientAttribute attribute="gender" />
       <PatientAttribute attribute="occupation" />
       <PatientAttribute attribute="ssn" />
+      <br />
+      <Entries patient={patient} />
     </Box>
   );
 };
