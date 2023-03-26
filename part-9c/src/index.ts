@@ -1,7 +1,12 @@
 import express from "express";
 import cors from "cors";
 import { getDiagnoses } from "./services/diagnoses";
-import { getPatient, getPatients, createPatient } from "./services/patients";
+import {
+  getPatient,
+  getPatients,
+  createPatient,
+  createPatientEntry,
+} from "./services/patients";
 
 const app = express();
 app.use(express.json());
@@ -32,10 +37,20 @@ app.get("/api/patient/:id", (req, res) => {
 });
 
 app.post("/api/patients", (req, res) => {
-  console.log(req);
   const patient = createPatient(req.body);
 
   res.status(201).send(patient);
+});
+
+app.post("/api/patients/:id/entries", (req, res) => {
+  const { id } = req.params;
+  const patient = getPatient(id);
+  if (patient) {
+    const patientWithEntry = createPatientEntry(patient, req.body);
+    res.send(patientWithEntry);
+  } else {
+    res.status(404);
+  }
 });
 
 app.listen(PORT, () => {
